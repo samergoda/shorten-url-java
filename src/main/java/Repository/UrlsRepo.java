@@ -1,12 +1,19 @@
 package Repository;
 
+import Interfaces.UrlRepository;
 import utils.Base62Encoder;
+
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class UrlsRepo {
+public class UrlsRepo implements UrlRepository {
     private final ConcurrentHashMap<String, String> urlToCode = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> codeToUrl = new ConcurrentHashMap<>();
-    private final Base62Encoder base62Encoder = new Base62Encoder();
+    private final Base62Encoder base62Encoder;
+
+    public UrlsRepo(Base62Encoder base62Encoder){
+        this.base62Encoder = base62Encoder;
+    }
 
     public String createShortenUrl(String url){
         // Check if already exists
@@ -22,8 +29,8 @@ public class UrlsRepo {
         return shortened;
     }
 
-    public String getUrl(String shortenedCode){
-        String originalUrl = codeToUrl.get(shortenedCode);
-        return originalUrl != null ? originalUrl : "Not found";
+
+    public Optional<String> getUrl(String shortenedCode){
+        return Optional.ofNullable(codeToUrl.get(shortenedCode));
     }
 }

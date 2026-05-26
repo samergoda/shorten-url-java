@@ -1,9 +1,11 @@
 package org.example;
 
+import Repository.UrlsRepo;
 import Service.UrlsService;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.sun.net.httpserver.HttpServer;
+import utils.Base62Encoder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +16,9 @@ import java.nio.charset.StandardCharsets;
 public class Main {
     public static void main(String[] args) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(8080),0);
-        UrlsService urlsService = new UrlsService();
+        Base62Encoder encoder = new Base62Encoder();
+        UrlsRepo urlsRepo = new UrlsRepo(encoder);
+        UrlsService urlsService = new UrlsService(urlsRepo);
 
         server.createContext("/shorten-url", exchange -> {
             String method = exchange.getRequestMethod();
