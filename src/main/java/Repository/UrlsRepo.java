@@ -21,6 +21,10 @@ public class UrlsRepo implements UrlRepository {
         if(existing != null){
             return existing;
         }
+        // Check if start with https
+        if(!url.startsWith("https")){
+            return "invalid URL";
+        }
 
         // Create new shortened URL
         String shortened = base62Encoder.encode(url);

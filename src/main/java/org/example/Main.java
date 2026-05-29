@@ -25,8 +25,7 @@ public class Main {
             System.out.println("get request");
 
             if(method.equals("POST")){
-        try{
-                InputStream inputStream = exchange.getRequestBody();
+                try (OutputStream os = exchange.getResponseBody()) {                InputStream inputStream = exchange.getRequestBody();
                 String requestBody = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
 
                 Gson gson = new Gson();
@@ -39,7 +38,6 @@ public class Main {
                 exchange.getResponseHeaders().set("Content-Type", "application/json");
                 exchange.sendResponseHeaders(201, shortenUrl.length());
 
-                OutputStream os = exchange.getResponseBody();
                 os.write(shortenUrl.getBytes());
                 os.close();
             } catch (Exception e) {
@@ -55,7 +53,7 @@ public class Main {
         }
 
             } else if(method.equals("GET")){
-                try {
+                try (OutputStream os = exchange.getResponseBody()) {
                     String path = exchange.getRequestURI().getPath();
                     String[] parts = path.split("/");
 
@@ -65,7 +63,6 @@ public class Main {
                         String error = "{\"error\": \"Missing shortened code\"}";
                         exchange.getResponseHeaders().set("Content-Type", "application/json");
                         exchange.sendResponseHeaders(400, error.length());
-                        OutputStream os = exchange.getResponseBody();
                         os.write(error.getBytes());
                         os.close();
                         return;
@@ -80,7 +77,6 @@ public class Main {
                         String error = "{\"error\": \"URL not found\"}";
                         exchange.getResponseHeaders().set("Content-Type", "application/json");
                         exchange.sendResponseHeaders(404, error.length());
-                        OutputStream os = exchange.getResponseBody();
                         os.write(error.getBytes());
                         os.close();
                         return;
@@ -89,7 +85,6 @@ public class Main {
                     // Success: 200 OK
                     exchange.getResponseHeaders().set("Content-Type", "application/json");
                     exchange.sendResponseHeaders(200, originalUrl.length());
-                    OutputStream os = exchange.getResponseBody();
                     os.write(originalUrl.getBytes());
                     os.close();
 
@@ -103,7 +98,8 @@ public class Main {
                     os.write(error.getBytes());
                     os.close();
                 }
-            }        });
+            }
+        });
 
         server.setExecutor(null);
         server.start();

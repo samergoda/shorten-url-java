@@ -4,10 +4,11 @@ public class Base62Encoder {
 
     private static final String BASE62 =
             "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private int autoIncrement = 1;
 
     public  String encode(String input) {
 
-        long number = Math.abs(input.hashCode());
+        long number = Math.abs(autoIncrement++);
 
         return encodeNumber(number);
     }
